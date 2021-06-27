@@ -1,5 +1,8 @@
+__all__ = ['StoppableThread', 'TimerThread']
+
+
 from threading import Thread, Timer
-from typing import Optional
+from typing import Callable, Optional
 
 
 class StoppableThread(Thread):
@@ -37,28 +40,35 @@ class StoppableThread(Thread):
 
 
 class TimerThread:
-    def __init__(self, period, method, args):
-        self.stopped = False
-        self.args = args
-        self.method = method
-        self.period = period
-        self.task = None
+    """
+    for run function in period of time with thread
+    """
+    def __init__(self, period: float, target: Callable, args: tuple = tuple()):
+        self.stopped: bool = False
+        self.args: tuple = args
+        self.method: Callable = target
+        self.period: float = period
+        self.task: Timer = None
 
-    def schedule(self):
-        if not self.stopped:
-            self.task = Timer(self.period, self.run, [])
-            self.task.start()
+    def _schedule(self):
+        self.stopped = False
+        self.task = Timer(self.period, function=self.run, args=self.args)
+        self.task.start()
 
     def run(self):
-        if not self.stopped:
-            self.method(*self.args)
-            self.schedule()
+        """
+        make timer object and run timer in period time
+        """
+        self._schedule()
 
     def stop(self):
+        """
+        change status stop and cancel timer obj
+        """
         self.stopped = True
         if self.task:
             self.task.cancel()
             self.task.join()
 
     def start(self):
-        self.schedule()
+        self.run()
