@@ -178,3 +178,4 @@ tags
 .directory
 .Trash-*
 .nfs*
+test.py
