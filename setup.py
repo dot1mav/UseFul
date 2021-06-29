@@ -1,12 +1,12 @@
 from setuptools import setup
 
 
- def libs() -> list:
-     temp = []
-     with open("requirements.txt", "r") as req_file:
-         for i in req_file.readlines():
-             temp.append(i.rsplit('\n')[0])
-     return temp
+def libs() -> list:
+    temp = []
+    with open("requirements.txt", "r") as req_file:
+        for i in req_file.readlines():
+            temp.append(i.rsplit('\n')[0])
+    return temp
 
 
 setup(
