@@ -1,0 +1,4 @@
+mysql-connector-python==8.0.25
+protobuf==3.17.2
+python-dotenv==0.17.1
+six==1.16.0
