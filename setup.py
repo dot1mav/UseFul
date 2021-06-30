@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def libs() -> list:
@@ -11,11 +11,11 @@ def libs() -> list:
 
 setup(
     name='useful',
-    version='0.1.1',
+    version='0.1.2',
     author="dot1mav",
     author_email="dot1mav@gmail.com",
     url="https://github.com/dot1mav/UseFul",
-    packages=['UseFul'],
+    packages=find_packages(),
     include_package_data=True,
     install_requires=libs(),
 )
