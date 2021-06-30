@@ -5,8 +5,8 @@ from .functions import check_db
 
 
 class DataBase(Base):
-    def __init__(self):
-        super(DataBase, self).__init__()
+    def __init__(self, host: str, username: str, password: str, db_name: str, charset: str = "utf8"):
+        super().__init__(host, username, password, db_name, charset=charset)
 
     def select(self, table, *args):
         pass
@@ -38,6 +38,5 @@ class DataBase(Base):
         cursor.execute(query, args)
         return cursor.fetchall()
 
-    @check_db
     def close(self):
         self._db.close()
