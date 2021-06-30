@@ -18,7 +18,6 @@ class StoppableThread(Thread):
 
         """
         if not self.__stop:
-            print("start")
             super(StoppableThread, self).start()
 
     def run(self) -> None:
@@ -105,3 +104,11 @@ class TimerThread:
 def thread_function(func: Callable):
     print(func)
     return _Thread(target=func, name=func.__name__)
+
+
+def thread_method(func: Callable):
+    par = None
+    def _wraps(self):
+        global par
+        par = self
+    return _Thread(target=func, args=([par]), name=func.__name__)
