@@ -10,7 +10,6 @@ def check_db(func):
             self._db.reconnect(attempts=5)
         if cursor is None:
             cursor = self._db.cursor(buffered=True)
-        print(query)
         if query[-1] != ';':
             query += ';'
         value = func(self, query, args, cursor)
