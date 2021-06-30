@@ -1,17 +1,16 @@
 __all__ = ['Base']
 
 import mysql.connector as sql
-from os import environ
 
 
 class Base:
-    def __init__(self, host=None, username=None, password=None, db_name=None, charset='utf8'):
+    def __init__(self, host: str, username: str, password: str, db_name: str, charset: str='utf8'):
         self._db = sql.connect(
-            host=host if host else environ['DB_HOST'],
-            user=username if username else environ['DB_USER'],
-            password=password if password else environ['DB_PASS'],
+            host=host,
+            user=username,
+            password=password,
             charset=charset)
-        self.db_name = db_name if db_name else environ['DB_NAME']
+        self.db_name = db_name
         cursor = self._db.cursor()
         self.__db_checker(cursor)
         self.__config()
