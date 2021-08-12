@@ -1,6 +1,7 @@
-__all__ = ['StoppableThread', '_Thread', 'TimerThread', 'thread_function']
+__all__ = ["StoppableThread", "_Thread", "TimerThread", "thread_function"]
 
-from threading import Thread, Timer, Event, Lock, RLock
+from dataclasses import dataclass
+from threading import Thread, Timer, Event, ThreadError
 from typing import Callable, Optional, Any, Union
 
 
@@ -15,13 +16,14 @@ class StoppableThread(Thread):
 
     def start(self) -> None:
         """
-
+        start the thread with Thread().start()
         """
         if not self.__stop:
             super(StoppableThread, self).start()
 
     def run(self) -> None:
         """
+        start thread with Thread().run()
         """
         if not self.__stop:
             super(StoppableThread, self).run()
@@ -40,28 +42,31 @@ class StoppableThread(Thread):
         return self.__stop
 
 
-class _Thread(StoppableThread):
-    def __init__(self, target: Optional[Callable[..., Any]], event: Optional[Union[Event, None]] = None,
-                 lock: Optional[Union[Lock, RLock, None]] = None, *args, **kwargs) -> None:
-        super(_Thread, self).__init__(target=target, *args, **kwargs)
+class Thread_(StoppableThread):
+    def __init__(self, target: Optional[Callable[..., Any]], event: Optional[Union[Event, None]] = None, *args, **kwargs) -> None:
+        super(Thread_, self).__init__(target=target, *args, **kwargs)
         self._event = event if event else Event()
-        self._lock = lock
 
     @property
     def event(self) -> Event:
+        """
+        get event
+        """
         return self._event
 
     @event.setter
     def event(self, event: Event) -> None:
+        """
+        set event
+        """
         self._event = event
 
-    @property
-    def lock(self) -> Lock:
-        return self._lock
-
-    @lock.setter
-    def lock(self, lock: Union[Lock, RLock]) -> None:
-        self._lock = lock
+    @event.deleter
+    def event(self):
+        """
+        set event to none
+        """
+        self._event = None
 
 
 class TimerThread:
@@ -100,15 +105,40 @@ class TimerThread:
     def start(self):
         self.run()
 
+@dataclass
+class __ThreadFunction:
+    _func: Callable
+    __name: str
 
-def thread_function(func: Callable):
-    print(func)
-    return _Thread(target=func, name=func.__name__)
+    def start(self, *args):
+        """
+        start the thread with argument to pass function
+        ** if thread exist raise **
+        """
+        if "thread" not in self.__dict__.keys():
+            self._args: list[Any] = [*args]
+            self.__dict__["thread"] = Thread_(
+                target=self._func, name=self.__name, args=self._args)
+            self.__dict__["thread"].start()
+        else:
+            raise ThreadError(f"thread has been started {self.__dict__['thread']}")
 
+    def stop(self):
+        """
+        stop thread and make object null
+        ** if not thread exist raise **
+        """
+        if "thread" in self.__dict__.keys():
+            self.__dict__["thread"].stop()
+            del self.__dict__["thread"]
+        else:
+            raise ThreadError("thread not start yet!!!")
 
-def thread_method(func: Callable):
-    par = None
-    def _wraps(self):
-        global par
-        par = self
-    return _Thread(target=func, args=([par]), name=func.__name__)
+    def is_stop(self):
+        """
+        check thread exist or not
+        """
+        return False if "thread" in self.__dict__.keys() else True
+
+def thread_function(func: Callable) -> __ThreadFunction:
+    return __ThreadFunction(func, func.__name__)
