@@ -1,21 +1,18 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
-def libs() -> list:
-    temp = []
-    with open("requirements.txt", "r") as req_file:
-        for i in req_file.readlines():
-            temp.append(i.rsplit('\n')[0])
-    return temp
-
+libs = []
+with open("requirements.txt", "r") as req_file:
+    for i in req_file.readlines():
+        libs.append(i.rsplit("\n")[0])
 
 setup(
-    name='useful',
-    version='0.1.2',
+    name="useful",
+    version="0.2.0",
     author="dot1mav",
     author_email="dot1mav@gmail.com",
     url="https://github.com/dot1mav/UseFul",
-    packages=find_packages(),
+    packages=["UseFul"],
     include_package_data=True,
-    install_requires=libs(),
+    install_requires=libs,
 )
